@@ -1,0 +1,24 @@
+server:
+  port: 8568
+spring:
+  application:
+    name: skt-ms-minio
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 10MB
+      max-request-size: 15MB
+minio:
+  url: http://localhost:9000
+  bucket: testing
+  #access-key: ROOTNAME
+  #secret-key: CHANGEME123
+  access-key: yueeK1xt7zZZvXTb
+  secret-key: Fibmca4L7LGqxGpqAvJMSuBnfP1BjSVz
+eureka:
+  client:
+    enabled: false
+    registerWithEureka: false
+    serviceUrl:
+      defaultZone: http://192.168.100.207:8707/eureka/
