@@ -5,11 +5,14 @@ import io.minio.*
 import io.minio.http.Method
 import io.minio.messages.Item
 import lombok.extern.slf4j.Slf4j
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.InputStream
+import kotlin.math.log
 
 @Slf4j
 @Service
@@ -19,6 +22,7 @@ class MinioService @Autowired constructor(
     @Value("\${minio.bucket}")
     lateinit var bucketName: String
 
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     fun getListObjects(): List<FileDto>? {
         val objects: MutableList<FileDto> = ArrayList()
         try {
@@ -57,8 +61,9 @@ class MinioService @Autowired constructor(
                     .expiry(60 * 60 * 24) // one day
                     .build()
             )
-        }catch (ex: Exception){
 
+        }catch (ex: Exception){
+            logger.error("hubo un error ${ex.message}")
             null
         }
     }
@@ -72,7 +77,7 @@ class MinioService @Autowired constructor(
                     .build()
             )
         } catch (e: Exception) {
-            println("Happened error when get list objects from minio: ${e.message}")
+            logger.error("Happened error when get list objects from minio: ${e.message}")
 
             return null
         }

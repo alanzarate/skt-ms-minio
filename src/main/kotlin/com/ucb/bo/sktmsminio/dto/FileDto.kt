@@ -22,6 +22,7 @@ class FileDto (
     val url: String? = null,
     val size: Long? = null,
     val filename: String? = null,
-    val uuidFile: String? = null
+    val uuidFile: String? = null,
 ){
+
 }
