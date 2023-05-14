@@ -29,8 +29,8 @@ class FileBl @Autowired constructor(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     fun uploadFileBl(title:String, file:MultipartFile, filename:String?): FileDto? {
-        var returned: FileDto? = null
-        var uuid = UUID.randomUUID().toString();
+        var returned: FileDto?
+        var uuid = UUID.randomUUID().toString()
         if ( filename != null)  uuid = filename
         val success = minioService.uploadFile(uuid, file)
         returned = FileDto(
@@ -71,17 +71,12 @@ class FileBl @Autowired constructor(
 
 
 
-            if (fileBits != null) {
-                return ResponseEntity
-                    .ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(
-                         IOUtils.toByteArray(fileBits)
-                    )
-
-            }else{
-                throw Exception()
-            }
+            return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(
+                     IOUtils.toByteArray(fileBits)
+                )
         }catch (ex2: Exception){
             return ResponseEntity
                 .badRequest()
@@ -101,10 +96,12 @@ class FileBl @Autowired constructor(
             response.addHeader("Content-disposition", "attachment;filename=$fileName")
             response.contentType = URLConnection.guessContentTypeFromName(uuid)
 
+
             // Copy the stream to the response's output stream.
             IOUtils.copy(inputStream, response.outputStream)
             response.flushBuffer()
         }catch (ex: Exception){
+            logger.error("BAD request")
             response.sendError(1,"BAD REQUEST")
             response.flushBuffer()
         }
@@ -113,7 +110,7 @@ class FileBl @Autowired constructor(
 
     fun getSignedUrlMultiple(body: HashMap<String, Any>): ResponseEntity<Any> {
         try {
-            var listDto = ArrayList<FileDto>()
+            val listDto = ArrayList<FileDto>()
             val requestBody = body["uuid"] as ArrayList<*>
             for (obj in requestBody){
                     listDto.add(
@@ -142,7 +139,7 @@ class FileBl @Autowired constructor(
 
 
     fun  hasDuplicates(arr: ArrayList<String>): Boolean {
-        return arr.size != arr.distinct().count();
+        return arr.size != arr.distinct().count()
     }
     fun uploadMultipleFileBl(requestBody: ArrayList<FileDto>): ArrayList<FileDto> {
 

@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+## CUSTOM
+.env
+directory_to_ignore/

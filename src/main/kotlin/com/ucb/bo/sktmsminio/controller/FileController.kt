@@ -28,6 +28,12 @@ class FileController @Autowired constructor(
     private val minioService: MinioService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+
+    /*
+    Subir un unico archivo
+    Requiere de un FILEDTO
+    Obligatorio (title, file)
+     */
     @PostMapping()
     fun uploadFile(@ModelAttribute requestBody: FileDto?): ResponseEntity<Any>{
         try{
@@ -58,6 +64,14 @@ class FileController @Autowired constructor(
         }
 
     }
+
+    /*
+    Subir Multiples archivos
+    Requiere de un ARRAY de FILEDTO
+    Obligatorio (title, file) por DTO
+    si no se descarta
+    title: debe ser unico comparado con los demas
+     */
     @PostMapping("/multiple")
     fun uploadMultipleFile(@ModelAttribute requestBody: ArrayList<FileDto>?): ResponseEntity<Any>{
         try{
@@ -86,26 +100,45 @@ class FileController @Autowired constructor(
 
     }
 
+    /*
+    Consigue un link del archivo con las firmas
+    Requiere del uuid del archivo
+
+     */
     @GetMapping("/{id}")
     fun getUrlSigned(@PathVariable id: String): ResponseEntity<Any> {
         return fileBl.getSignedUrl(id)
     }
 
+    /*
+    consigue los enlaces de archivo con las firmas de todos los uuid que se pasen en forma de lista
+    Ej {
+        "uuid": ["uuid1", "uuid2"]
+    }
+     */
     @PostMapping("/all")
     fun getUrlSignedMultiple(@RequestBody requestBody: HashMap<String, Any> ):ResponseEntity<Any>{
         return fileBl.getSignedUrlMultiple(requestBody)
     }
 
+    /*
+    DEPRECATED
     @GetMapping("/download/{id}")
     fun getDownload(@PathVariable id: String): ResponseEntity<Any>{
         return fileBl.downloadFile(id)
     }
+     */
 
-    @GetMapping("/v2/{uuid}")
+
+    /*
+    consigue una coneccion en forma de enlace para descargar el recurso
+     */
+    @GetMapping("/download/{uuid}")
     @Throws(MinioException::class, IOException::class)
     fun getObject(@PathVariable("uuid") uuid: String,
                   @RequestParam customQuery:Map<String, String>,
                   response: HttpServletResponse) {
+        logger.info("Se requiere descargar un archivo ${customQuery["filename"]}")
         fileBl.downloadFileV2(uuid, customQuery["filename"], response )
 
     }
