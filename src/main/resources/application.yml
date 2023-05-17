@@ -1,6 +1,8 @@
 server:
-  port: 8568
+  port: ${SKT_MS_MINIO_PORT:8568}
 spring:
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: skt-ms-minio
   servlet:
@@ -10,20 +12,48 @@ spring:
       max-file-size: 10MB
       max-request-size: 15MB
   zipkin:
-    base-url: http://localhost:9910
+    base-url: ${ZIPKIN_URL:http://localhost:9910}
     locator:
       discovery:
         enabled: true
+
+custom-config:
+  logs-uri: ${LOGS_URI}
+
 minio:
-  url: http://localhost:9000
-  bucket: testing
+  url: ${MINIO_URL:http://localhost:9000}
+  bucket: ${MINIO_BUCKET:testing}
   #access-key: ROOTNAME
   #secret-key: CHANGEME123
-  access-key: yueeK1xt7zZZvXTb
-  secret-key: Fibmca4L7LGqxGpqAvJMSuBnfP1BjSVz
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
 eureka:
   client:
-    enabled: false
-    registerWithEureka: false
+    #enabled: false
+    registerWithEureka: true
+    fetchRegistry: true
     serviceUrl:
-      defaultZone: http://192.168.100.207:8707/eureka/
+      defaultZone: ${EUREKA_URL:http://localhost:8707/eureka/}
+
+keycloak:
+  config:
+    import: optional:file:.env[.properties]
+  realm: ${REALM_KEYCLOAK}
+  auth-server-url: ${URL_KEYCLOAK:http://localhost:8080}
+  autodetect-bearer-only: true
+  ssl-required: none
+  resource: ${RESOURCE_KEYCLOAK}
+  credentials:
+    secret: ${SECRET_CREDENTIAL_KEYCLOAK}
+  use-resource-role-mappings: false
+  security-constraints:
+    - auth-roles:
+        - can_create_minio
+        - can_read_minio
+      security-collections:
+        - name: SOME ACCESS MINIO
+          methods:
+            - GET
+            - POST
+          patterns:
+            - /api/v1/files/*
