@@ -107,6 +107,7 @@ class FileController @Autowired constructor(
      */
     @GetMapping("/{id}")
     fun getUrlSigned(@PathVariable id: String): ResponseEntity<Any> {
+        logger.info("GET the variable $id ")
         return fileBl.getSignedUrl(id)
     }
 

@@ -47,7 +47,7 @@ class FileBl @Autowired constructor(
     fun getSignedUrl(filenameUUID: String):ResponseEntity<Any>{
         try {
             val str = minioService.getPreSignedUrl(filenameUUID) ?: throw Exception("No se encontro ninguno")
-            println(str)
+            logger.info("se obtuvo exitosamente el archivo $filenameUUID")
             val fileDto = FileDto(
                 uuidFile = filenameUUID,
                 url = str)
