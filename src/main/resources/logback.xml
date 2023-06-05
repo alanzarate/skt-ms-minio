@@ -34,6 +34,9 @@
         <destination>${logback_uri}</destination>
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
                 <mdc />
                 <context />
                 <logLevel />
@@ -41,7 +44,11 @@
                 <pattern>
                     <pattern>
                         {
-                        "app": "skt-ms-minio"
+                        "app": "${application:-}",
+                        "port": "${port:-}",
+                        "level": "${LOG_LEVEL_PATTERN}",
+                        "pid": "${PID}"
+
                         }
                     </pattern>
                 </pattern>

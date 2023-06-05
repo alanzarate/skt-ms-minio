@@ -56,4 +56,4 @@ keycloak:
             - GET
             - POST
           patterns:
-            - /api/v1/files/*
+            - /apia/v1/files/*
